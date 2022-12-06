@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 
 public class Server {
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 
         System.out.println(InetAddress.getLocalHost());
         System.out.println("Introduce a valid port number: ");
@@ -13,7 +13,7 @@ public class Server {
         BufferedReader reader1 = new BufferedReader(new InputStreamReader(System.in));
         int port = Integer.parseInt(reader1.readLine());
 
-        while (port < 0 && port > 65536) {
+        while (port < 0 || port > 65536) {
             System.out.println("The port number is not valid. Introduce a valid port number: ");
             port = Integer.parseInt(reader1.readLine());
         }

@@ -12,14 +12,14 @@ import java.util.List;
 
 public class MyChatServer implements ChatServer, Runnable {
     private static int port;
-    private Thread s1;
     private static MyChatServer server;
+    private Thread s1;
     private List<ChatClientHandler> clients;
     private ServerSocket serverSocket;
 
-    public MyChatServer(int port){
+    public MyChatServer(int port) {
         server = this;
-        this.port = port;
+        MyChatServer.port = port;
     }
 
     @Override
@@ -48,17 +48,17 @@ public class MyChatServer implements ChatServer, Runnable {
         return port;
     }
 
-    public void handleChatMessage(ChatClientHandler from, String message){
-        for (int i = 0; i < clients.size(); i++){
+    public void handleChatMessage(ChatClientHandler from, String message) {
+        for (int i = 0; i < clients.size(); i++) {
             clients.get(i).sendChat(from.getUsername(), message);
         }
     }
 
-    public void addClient(ChatClientHandler client){
+    public void addClient(ChatClientHandler client) {
         clients.add(client);
     }
 
-    public void removeClient(ChatClientHandler client){
+    public void removeClient(ChatClientHandler client) {
         clients.remove(client);
     }
 
@@ -103,20 +103,20 @@ class ChatClientHandler implements Runnable {
         this.out = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    public void sendChat(String from, String message){
-        String s[] = message.split("~");
+    public void sendChat(String from, String message) {
+        String[] s = message.split("~");
         try {
-            out.println("FROM~"+from+"~"+s[1]);
-        }catch (Exception e){
+            out.println("FROM~" + from + "~" + s[1]);
+        } catch (Exception e) {
             close();
         }
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return username;
     }
 
-    public void close(){
+    public void close() {
         try {
             server.removeClient(this);
             socket.close();
@@ -131,17 +131,15 @@ class ChatClientHandler implements Runnable {
         try {
             username = in.readLine();
             while ((line = in.readLine()) != null) {
-                if (line.matches("SAY~.*")){
+                if (line.matches("SAY~.*")) {
                     server.handleChatMessage(this, line);
                 }
             }
-            if(line == null){
+            if (line == null) {
                 close();
-                return;
             }
         } catch (Exception e) {
             close();
-            return;
         }
 
     }

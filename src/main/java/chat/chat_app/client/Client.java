@@ -4,12 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Client implements ChatClient, Runnable{
+public class Client implements ChatClient, Runnable {
     static Socket socket;
     static PrintWriter writer;
     static BufferedReader in;
@@ -18,7 +17,7 @@ public class Client implements ChatClient, Runnable{
 
     @Override
     public void addChatListener(ChatListener listener) {
-        if (chatListeners == null){
+        if (chatListeners == null) {
             chatListeners = new ArrayList<>();
         }
         chatListeners.add(listener);
@@ -31,13 +30,13 @@ public class Client implements ChatClient, Runnable{
 
     @Override
     public boolean sendUsername(String username) {
-        if (username == null){
+        if (username == null) {
             return false;
         }
         this.username = username;
-        try{
+        try {
             writer.println(username);
-        }catch (Exception e){
+        } catch (Exception e) {
             close();
             return false;
         }
@@ -46,12 +45,12 @@ public class Client implements ChatClient, Runnable{
 
     @Override
     public boolean sendMessage(String message) {
-        if (message == null){
+        if (message == null) {
             return false;
         }
-        try{
+        try {
             writer.println("SAY~" + message);
-        }catch (Exception e){
+        } catch (Exception e) {
             close();
             return false;
         }
@@ -95,18 +94,16 @@ public class Client implements ChatClient, Runnable{
 
         try {
             while ((line = in.readLine()) != null) {
-                for (int i = 0; i < chatListeners.size(); i++){
-                    String s[] = line.split("~");
+                for (int i = 0; i < chatListeners.size(); i++) {
+                    String[] s = line.split("~");
                     chatListeners.get(i).messageReceived(s[1], s[2]);
                 }
             }
-            if(line == null){
+            if (line == null) {
                 close();
-                return;
             }
         } catch (Exception e) {
             close();
-            return;
         }
     }
 }

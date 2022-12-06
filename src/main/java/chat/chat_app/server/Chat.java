@@ -3,34 +3,20 @@ package chat.chat_app.server;
 import chat.chat_app.client.ChatClient;
 import chat.chat_app.client.ChatListener;
 import chat.chat_app.client.Client;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import org.controlsfx.control.spreadsheet.Grid;
 
-import static javafx.application.Platform.runLater;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
-public class Chat extends Application implements ChatListener{
+public class Chat extends Application implements ChatListener {
 
     static TextArea chatArea;
 
@@ -38,8 +24,12 @@ public class Chat extends Application implements ChatListener{
 
     static int portInt = -1;
 
+    public static void main(String[] args){
+        launch();
+    }
+
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage){
 
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10, 10, 10, 10));
@@ -85,7 +75,7 @@ public class Chat extends Application implements ChatListener{
 
         chatArea = new TextArea();
 
-        chatArea.setPadding(new Insets(10,10,10,10));
+        chatArea.setPadding(new Insets(10, 10, 10, 10));
 
         GridPane.setHgrow(chatArea, Priority.ALWAYS);
         GridPane.setVgrow(chatArea, Priority.ALWAYS);
@@ -103,35 +93,35 @@ public class Chat extends Application implements ChatListener{
             grid.getChildren().remove(invaliMessage);
             Chat chat = new Chat();
 
-            try{
+            try {
                 portInt = Integer.parseInt(port.getText());
-            }catch (Exception ex){
-
+            } catch (Exception ex) {
+                System.err.println("No port provided");
             }
 
             if (portInt < 0 || portInt > 65536) {
                 invaliMessage = new Label("Incorrect port");
                 GridPane.setConstraints(invaliMessage, 0, 15);
                 grid.getChildren().add(invaliMessage);
-            }else {
+            } else {
                 ChatClient client = new Client();
 
                 String address = ip.getText();
 
-                if (!client.connect(address, portInt)){
+                if (!client.connect(address, portInt)) {
                     invaliMessage = new Label("Connection failed!");
                     GridPane.setConstraints(invaliMessage, 0, 15);
                     grid.getChildren().add(invaliMessage);
-                }else {
+                } else {
                     client.addChatListener(chat);
 
                     String username1 = username.getText();
 
-                    if (!client.sendUsername(username1)){
+                    if (!client.sendUsername(username1)) {
                         invaliMessage = new Label("Invalid username!");
                         GridPane.setConstraints(invaliMessage, 0, 15);
                         grid.getChildren().add(invaliMessage);
-                    }else {
+                    } else {
                         stage.setScene(scene1);
                         Button send = new Button("Send");
                         GridPane.setConstraints(send, 10, 10);
@@ -149,13 +139,9 @@ public class Chat extends Application implements ChatListener{
         });
     }
 
-    public static void main(String[] args) throws IOException {
-        launch();
-    }
-
     @Override
     public void messageReceived(String from, String message) {
-        System.out.println("FROM "+from+": "+message);
+        System.out.println("FROM " + from + ": " + message);
 
         Date date = new Date(System.currentTimeMillis());
         DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
